@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Break the Bricks -- HelloWorld </title>
+		<style media="screen">
+canvas {
+	border: 1px black solid;
+}
+		</style>
+		<script src='block.js'></script>
+		<script src='paddle.js'></script>
+		<script src='ball.js'></script>
+		<script src='brickgame.js'></script>
+		<script src='utils.js'></script>
+		<script src='level.js'></script>
+	</head>
+	<body>
+		<div style="width:500px;margin:0 auto">
+			<canvas id="id-canvas" width="400" height="300"></canvas>
+		</div>
+		<script>
+var __main = function() {
+	var paddle = Paddle()
+	var game = BrickGame(1000)
+	var ball = Ball()
+	var blocks = loadLevel(0)
+
+	var level = levels[0]
+	for(var i = 0; i < level.length; i++){
+		var p = level[i]
+		var b = Block(p)
+		blocks.push(b)	}
+	//event
+	game.registerAction('a', function(){
+		paddle.moveLeft()
+	})
+	game.registerAction('d', function(){
+		paddle.moveRight()
+	})
+	game.registerAction('f', function(){
+		ball.fire()
+	})
+	window.addEventListener('keydown', function(event){
+		if(event.key == '1' && game.iswin){
+			blocks = loadLevel(1)
+			ball = Ball()
+			game = BrickGame()
+		}else if(event.key == '2' && game.iswin){
+			blocks = loadLevel(2)
+			ball = Ball()
+			game = BrickGame()
+		}else if(event.key == '3' && game.iswin){
+			blocks = loadLevel(3)
+			ball = Ball()
+			game = BrickGame()
+	
+		}
+	})
+
+	game.update = function() {
+		if(ball.alive){
+			ball.move()
+		}
+		ball.collide(paddle)
+		for (var i = 0; i< blocks.length; i++){
+			var block = blocks[i]
+			ball.collide(block)
+			block.collide(ball)
+		}
+	}
+	game.draw = function() {
+		if(ball.alive && !game.iswin){
+			game.drawImage(ball)
+			game.drawImage(paddle)
+			game.detect(blocks)
+			for (var i = 0; i< blocks.length; i++){
+				var block = blocks[i]
+				if(block.alive){
+					game.drawImage(block)
+				}
+			}
+		}else if(game.iswin){
+			game.win()
+		}else{
+			game.over()
+		}
+
+	}
+}
+
+__main()
+
+		</script>
+	</body>
+</html>
